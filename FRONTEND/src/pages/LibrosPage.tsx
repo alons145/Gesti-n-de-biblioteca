@@ -11,6 +11,7 @@ import {
   PencilSquareIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
+import { FeedbackBanner } from '../components/FeedbackBanner';
 
 interface Libro {
   id: number;
@@ -39,8 +40,10 @@ export const LibrosPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({ titulo: '', autor: '', categoria: '', descripcion: '' });
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const { token, user, handleUnauthorized } = useAuthStore();
+  const actorLabel = user?.role === 'admin' ? 'administrador' : 'usuario';
 
   useEffect(() => {
     fetchLibros();
@@ -123,6 +126,8 @@ export const LibrosPage: React.FC = () => {
         await axios.post(`${API_URL}/libros`, form, { headers: { Authorization: `Bearer ${token}` } });
       }
       await fetchLibros();
+      setSuccess(editingId ? `Libro actualizado correctamente por ${actorLabel}.` : `Libro creado correctamente por ${actorLabel}.`);
+      setError(null);
       closeModal();
     } catch (err: any) {
       if (err.response?.status === 401) {
@@ -131,6 +136,7 @@ export const LibrosPage: React.FC = () => {
         return;
       }
       setError(err.response?.data?.error || (editingId ? 'Error actualizando libro' : 'Error creando libro'));
+      setSuccess(null);
     } finally {
       setIsSubmitting(false);
     }
@@ -151,6 +157,8 @@ export const LibrosPage: React.FC = () => {
     try {
       await axios.delete(`${API_URL}/libros/${libro.id}`, { headers: { Authorization: `Bearer ${token}` } });
       await fetchLibros();
+      setSuccess('Libro eliminado correctamente por el administrador.');
+      setError(null);
     } catch (err: any) {
       if (err.response?.status === 401) {
         handleUnauthorized();
@@ -158,6 +166,7 @@ export const LibrosPage: React.FC = () => {
         return;
       }
       setError(err.response?.data?.error || 'Error eliminando libro');
+      setSuccess(null);
     }
   };
 
@@ -253,6 +262,7 @@ export const LibrosPage: React.FC = () => {
           </div>
         </div>
 
+        {success && <FeedbackBanner type="success" title="Libros" message={success} onClose={() => setSuccess(null)} />}
         {error && <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg flex items-center justify-between"><span>{error}</span><button onClick={() => setError(null)}><XMarkIcon className="w-5 h-5" /></button></div>}
 
         {loading ? (

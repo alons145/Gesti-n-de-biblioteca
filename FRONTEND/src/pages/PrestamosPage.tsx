@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuthStore } from '../stores/authStore';
 import { Dialog, Transition } from '@headlessui/react';
 import { PlusIcon, XMarkIcon, CheckIcon, TrashIcon, CalendarIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { FeedbackBanner } from '../components/FeedbackBanner';
 
 interface Prestamo {
   id: number;
@@ -37,8 +38,10 @@ export const PrestamosPage: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ cliente_id: '', libro_id: '', fecha_devolucion_esperada: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const { token, user, handleUnauthorized } = useAuthStore();
+  const actorLabel = user?.role === 'admin' ? 'administrador' : 'usuario';
 
   useEffect(() => {
     fetchData();
@@ -98,6 +101,8 @@ export const PrestamosPage: React.FC = () => {
       setFormData({ cliente_id: '', libro_id: '', fecha_devolucion_esperada: '' });
       setShowForm(false);
       await fetchData();
+      setSuccess(`Préstamo registrado correctamente por ${actorLabel}.`);
+      setError(null);
     } catch (err: any) {
       if (isUnauthorizedError(err)) {
         handleUnauthorized();
@@ -105,6 +110,7 @@ export const PrestamosPage: React.FC = () => {
         return;
       }
       setError(err.response?.data?.error || 'Error al crear préstamo');
+      setSuccess(null);
     } finally {
       setIsSubmitting(false);
     }
@@ -122,6 +128,8 @@ export const PrestamosPage: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       await fetchData();
+      setSuccess('Préstamo eliminado correctamente por el administrador.');
+      setError(null);
     } catch (err: any) {
       if (isUnauthorizedError(err)) {
         handleUnauthorized();
@@ -129,6 +137,7 @@ export const PrestamosPage: React.FC = () => {
         return;
       }
       setError(err.response?.data?.error || 'Error al eliminar préstamo');
+      setSuccess(null);
     }
   };
 
@@ -141,6 +150,8 @@ export const PrestamosPage: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       await fetchData();
+      setSuccess(`Libro devuelto correctamente por ${actorLabel}.`);
+      setError(null);
     } catch (err: any) {
       if (isUnauthorizedError(err)) {
         handleUnauthorized();
@@ -148,6 +159,7 @@ export const PrestamosPage: React.FC = () => {
         return;
       }
       setError(err.response?.data?.error || 'Error al registrar devolución');
+      setSuccess(null);
     }
   };
 
@@ -187,6 +199,7 @@ export const PrestamosPage: React.FC = () => {
         </div>
 
         {/* Error */}
+        {success && <FeedbackBanner type="success" title="Préstamos" message={success} onClose={() => setSuccess(null)} />}
         {error && (
           <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg flex items-center justify-between">
             <span>{error}</span>

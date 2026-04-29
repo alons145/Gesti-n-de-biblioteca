@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { LockClosedIcon, EnvelopeIcon, UserIcon } from '@heroicons/react/24/outline';
+import { FeedbackBanner } from '../components/FeedbackBanner';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showRegister, setShowRegister] = useState(false);
   const [nombre, setNombre] = useState('');
+  const [notice, setNotice] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
   
   const { login, register, isLoading, error } = useAuthStore();
   const navigate = useNavigate();
@@ -16,7 +18,19 @@ export const LoginPage: React.FC = () => {
     e.preventDefault();
     try {
       await login(email, password);
-      navigate('/');
+      const user = useAuthStore.getState().user;
+      navigate('/', {
+        state: {
+          flash: {
+            type: 'success',
+            title: 'Inicio de sesión',
+            message:
+              user?.role === 'admin'
+                ? 'Has iniciado sesión como administrador. Puedes crear, editar y eliminar registros.'
+                : 'Has iniciado sesión como usuario. Puedes crear y editar registros; la eliminación queda reservada al administrador.',
+          },
+        },
+      });
     } catch (err) {
       console.error('Login failed:', err);
     }
@@ -30,6 +44,7 @@ export const LoginPage: React.FC = () => {
       setEmail('');
       setPassword('');
       setNombre('');
+      setNotice({ type: 'success', message: 'Registro completado. Ya puedes iniciar sesión con tu cuenta.' });
     } catch (err) {
       console.error('Register failed:', err);
     }
@@ -59,6 +74,7 @@ export const LoginPage: React.FC = () => {
 
           {/* Content */}
           <div className="px-8 py-12">
+            {notice && <FeedbackBanner type={notice.type} title="Registro" message={notice.message} onClose={() => setNotice(null)} />}
             {error && (
               <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded">
                 <p className="font-semibold text-sm">{error}</p>

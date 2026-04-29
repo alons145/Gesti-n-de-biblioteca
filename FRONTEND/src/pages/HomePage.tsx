@@ -1,11 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { UserGroupIcon, BookOpenIcon, DocumentDuplicateIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import { FeedbackBanner } from '../components/FeedbackBanner';
 
 export const HomePage: React.FC = () => {
   const { user } = useAuthStore();
+  const location = useLocation();
   const isAdmin = user?.role === 'admin';
+  const flash = (location.state as { flash?: { type: 'success' | 'error' | 'info'; title?: string; message: string } } | null)?.flash;
 
   const modules = [
     {
@@ -34,6 +37,20 @@ export const HomePage: React.FC = () => {
   return (
     <div className="flex-1 bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
+        <div className="mb-8">
+          {flash ? (
+            <FeedbackBanner type={flash.type} title={flash.title} message={flash.message} />
+          ) : (
+            <FeedbackBanner
+              type="info"
+              title={isAdmin ? 'Sesión de administrador' : 'Sesión de usuario'}
+              message={isAdmin
+                ? 'Puedes crear, editar y eliminar registros en todas las secciones.'
+                : 'Puedes crear y editar registros; eliminar queda restringido al administrador.'}
+            />
+          )}
+        </div>
+
         {/* Hero Section */}
         <div className="mb-16 text-center">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">

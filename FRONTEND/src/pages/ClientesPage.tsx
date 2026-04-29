@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuthStore } from '../stores/authStore';
 import { Dialog, Transition, Menu } from '@headlessui/react';
 import { PlusIcon, MagnifyingGlassIcon, XMarkIcon, CheckIcon, EllipsisVerticalIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { FeedbackBanner } from '../components/FeedbackBanner';
 
 interface Cliente {
   id: number;
@@ -20,12 +21,14 @@ export const ClientesPage: React.FC = () => {
   const [filtered, setFiltered] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [form, setForm] = useState({ nombre: '', email: '', telefono: '', direccion: '' });
   const [editingId, setEditingId] = useState<number | null>(null);
 
   const { token, user } = useAuthStore();
+  const actorLabel = user?.role === 'admin' ? 'administrador' : 'usuario';
 
   useEffect(() => { fetchClientes(); }, []);
   useEffect(() => { setFiltered(clientes.filter(c => c.nombre.toLowerCase().includes(search.toLowerCase()) || c.email.toLowerCase().includes(search.toLowerCase()))); }, [search, clientes]);
@@ -53,9 +56,12 @@ export const ClientesPage: React.FC = () => {
         await axios.post(`${API_URL}/clientes`, form, { headers: { Authorization: `Bearer ${token}` } });
       }
       await fetchClientes();
+      setSuccess(editingId ? `Cliente actualizado correctamente por ${actorLabel}.` : `Cliente creado correctamente por ${actorLabel}.`);
+      setError(null);
       closeModal();
     } catch (err: any) {
       setError(err.response?.data?.error || (editingId ? 'Error actualizando cliente' : 'Error creando cliente'));
+      setSuccess(null);
     }
   };
 
@@ -74,8 +80,11 @@ export const ClientesPage: React.FC = () => {
     try {
       await axios.delete(`${API_URL}/clientes/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       await fetchClientes();
+      setSuccess('Cliente eliminado correctamente por el administrador.');
+      setError(null);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Error eliminando cliente');
+      setSuccess(null);
     }
   };
 
@@ -104,6 +113,7 @@ export const ClientesPage: React.FC = () => {
           </div>
         </div>
 
+        {success && <FeedbackBanner type="success" title="Clientes" message={success} onClose={() => setSuccess(null)} />}
         {error && <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg flex items-center justify-between"><span>{error}</span><button onClick={() => setError(null)}><XMarkIcon className="w-5 h-5" /></button></div>}
 
         {loading ? (
