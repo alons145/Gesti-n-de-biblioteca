@@ -40,7 +40,7 @@ export const LibrosPage: React.FC = () => {
   const [form, setForm] = useState({ titulo: '', autor: '', categoria: '', descripcion: '' });
   const [editingId, setEditingId] = useState<number | null>(null);
 
-  const { token, handleUnauthorized } = useAuthStore();
+  const { token, user, handleUnauthorized } = useAuthStore();
 
   useEffect(() => {
     fetchLibros();
@@ -137,6 +137,10 @@ export const LibrosPage: React.FC = () => {
   };
 
   const handleDeleteLibro = async (libro: Libro) => {
+    if (user?.role !== 'admin') {
+      setError('Solo los administradores pueden eliminar libros');
+      return;
+    }
     if (!window.confirm(`¿Eliminar "${libro.titulo}"? Esta acción no se puede deshacer.`)) return;
     if (!token) {
       handleUnauthorized();
@@ -181,13 +185,15 @@ export const LibrosPage: React.FC = () => {
                     </button>
                   )}
                 </Menu.Item>
-                <Menu.Item>
-                  {({ active }) => (
-                    <button onClick={() => handleDeleteLibro(libro)} className={`w-full text-left px-4 py-2 text-sm text-red-600 ${active ? 'bg-gray-100' : ''}`}>
-                      <TrashIcon className="w-4 h-4 inline mr-2" /> Eliminar
-                    </button>
-                  )}
-                </Menu.Item>
+                {user?.role === 'admin' && (
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button onClick={() => handleDeleteLibro(libro)} className={`w-full text-left px-4 py-2 text-sm text-red-600 ${active ? 'bg-gray-100' : ''}`}>
+                        <TrashIcon className="w-4 h-4 inline mr-2" /> Eliminar
+                      </button>
+                    )}
+                  </Menu.Item>
+                )}
               </div>
             </Menu.Items>
           </Transition>
