@@ -17,6 +17,7 @@ interface AuthStore {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, nombre: string) => Promise<void>;
   logout: () => void;
+  handleUnauthorized: () => void;
 }
 
 const API_URL = 'http://localhost:5000/api';
@@ -80,5 +81,11 @@ export const useAuthStore = create<AuthStore>((set) => ({
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     set({ user: null, token: null });
+  },
+
+  handleUnauthorized: () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    set({ user: null, token: null, error: 'Tu sesión expiró. Vuelve a iniciar sesión.' });
   },
 }));

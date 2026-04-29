@@ -6,7 +6,6 @@ import {
   PlusIcon,
   MagnifyingGlassIcon,
   XMarkIcon,
-  CheckIcon,
   CheckCircleIcon,
   EllipsisVerticalIcon,
   PencilSquareIcon,
@@ -39,8 +38,9 @@ export const LibrosPage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({ titulo: '', autor: '', categoria: '', descripcion: '' });
+  const [editingId, setEditingId] = useState<number | null>(null);
 
-  const { token } = useAuthStore();
+  const { token, handleUnauthorized } = useAuthStore();
 
   useEffect(() => {
     fetchLibros();
@@ -51,12 +51,23 @@ export const LibrosPage: React.FC = () => {
   }, [libros, search, category, availability]);
 
   const fetchLibros = async () => {
+    if (!token) {
+      handleUnauthorized();
+      setError('Tu sesión expiró. Vuelve a iniciar sesión.');
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const res = await axios.get(`${API_URL}/libros`, { headers: { Authorization: `Bearer ${token}` } });
       setLibros(res.data);
       setError(null);
     } catch (e: any) {
+      if (e.response?.status === 401) {
+        handleUnauthorized();
+        setError('Tu sesión expiró. Vuelve a iniciar sesión.');
+        return;
+      }
       setError(e.response?.data?.error || 'Error cargando libros');
     } finally {
       setLoading(false);
@@ -75,23 +86,74 @@ export const LibrosPage: React.FC = () => {
     setFiltered(out);
   };
 
-  const openModal = () => setIsOpen(true);
+  const openModal = () => {
+    setEditingId(null);
+    setForm({ titulo: '', autor: '', categoria: '', descripcion: '' });
+    setIsOpen(true);
+  };
   const closeModal = () => {
     setIsOpen(false);
     setForm({ titulo: '', autor: '', categoria: '', descripcion: '' });
+    setEditingId(null);
+  };
+
+  const startEdit = (libro: Libro) => {
+    setEditingId(libro.id);
+    setForm({
+      titulo: libro.titulo,
+      autor: libro.autor,
+      categoria: libro.categoria,
+      descripcion: libro.descripcion || '',
+    });
+    setIsOpen(true);
   };
 
   const submitLibro = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    if (!token) {
+      handleUnauthorized();
+      setError('Tu sesión expiró. Vuelve a iniciar sesión.');
+      return;
+    }
     setIsSubmitting(true);
     try {
-      await axios.post(`${API_URL}/libros`, form, { headers: { Authorization: `Bearer ${token}` } });
+      if (editingId) {
+        await axios.put(`${API_URL}/libros/${editingId}`, form, { headers: { Authorization: `Bearer ${token}` } });
+      } else {
+        await axios.post(`${API_URL}/libros`, form, { headers: { Authorization: `Bearer ${token}` } });
+      }
       await fetchLibros();
       closeModal();
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error creando libro');
+      if (err.response?.status === 401) {
+        handleUnauthorized();
+        setError('Tu sesión expiró. Vuelve a iniciar sesión.');
+        return;
+      }
+      setError(err.response?.data?.error || (editingId ? 'Error actualizando libro' : 'Error creando libro'));
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteLibro = async (libro: Libro) => {
+    if (!window.confirm(`¿Eliminar "${libro.titulo}"? Esta acción no se puede deshacer.`)) return;
+    if (!token) {
+      handleUnauthorized();
+      setError('Tu sesión expiró. Vuelve a iniciar sesión.');
+      return;
+    }
+
+    try {
+      await axios.delete(`${API_URL}/libros/${libro.id}`, { headers: { Authorization: `Bearer ${token}` } });
+      await fetchLibros();
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        handleUnauthorized();
+        setError('Tu sesión expiró. Vuelve a iniciar sesión.');
+        return;
+      }
+      setError(err.response?.data?.error || 'Error eliminando libro');
     }
   };
 
@@ -114,14 +176,14 @@ export const LibrosPage: React.FC = () => {
               <div className="py-1">
                 <Menu.Item>
                   {({ active }) => (
-                    <button className={`w-full text-left px-4 py-2 text-sm ${active ? 'bg-gray-100' : ''}`}>
+                    <button onClick={() => startEdit(libro)} className={`w-full text-left px-4 py-2 text-sm ${active ? 'bg-gray-100' : ''}`}>
                       <PencilSquareIcon className="w-4 h-4 inline mr-2" /> Editar
                     </button>
                   )}
                 </Menu.Item>
                 <Menu.Item>
                   {({ active }) => (
-                    <button className={`w-full text-left px-4 py-2 text-sm text-red-600 ${active ? 'bg-gray-100' : ''}`}>
+                    <button onClick={() => handleDeleteLibro(libro)} className={`w-full text-left px-4 py-2 text-sm text-red-600 ${active ? 'bg-gray-100' : ''}`}>
                       <TrashIcon className="w-4 h-4 inline mr-2" /> Eliminar
                     </button>
                   )}
@@ -204,7 +266,7 @@ export const LibrosPage: React.FC = () => {
           </div>
         )}
 
-        {/* Modal: Agregar Libro */}
+        {/* Modal: Agregar/Editar Libro */}
         <Transition appear show={isOpen} as={Fragment}>
           <Dialog as="div" className="relative z-10" onClose={closeModal}>
             <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
@@ -215,7 +277,7 @@ export const LibrosPage: React.FC = () => {
               <div className="flex min-h-full items-center justify-center p-4 text-center">
                 <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
                   <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">Agregar nuevo libro</Dialog.Title>
+                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">{editingId ? 'Editar libro' : 'Agregar nuevo libro'}</Dialog.Title>
                     <form className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4" onSubmit={submitLibro}>
                       <input required value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} placeholder="Título" className="col-span-2 px-4 py-3 border rounded-lg" />
                       <input required value={form.autor} onChange={(e) => setForm({ ...form, autor: e.target.value })} placeholder="Autor" className="px-4 py-3 border rounded-lg" />
@@ -227,7 +289,7 @@ export const LibrosPage: React.FC = () => {
 
                       <div className="col-span-2 flex justify-end gap-3 mt-2">
                         <button type="button" onClick={closeModal} className="px-4 py-2 rounded-lg border">Cancelar</button>
-                        <button type="submit" disabled={isSubmitting} className="px-4 py-2 rounded-lg bg-emerald-600 text-white">{isSubmitting ? 'Guardando...' : 'Guardar'}</button>
+                        <button type="submit" disabled={isSubmitting} className="px-4 py-2 rounded-lg bg-emerald-600 text-white">{isSubmitting ? 'Guardando...' : editingId ? 'Actualizar' : 'Guardar'}</button>
                       </div>
                     </form>
                   </Dialog.Panel>

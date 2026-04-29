@@ -38,13 +38,28 @@ export const PrestamosPage: React.FC = () => {
   const [formData, setFormData] = useState({ cliente_id: '', libro_id: '', fecha_devolucion_esperada: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { token, user } = useAuthStore();
+  const { token, user, handleUnauthorized } = useAuthStore();
 
   useEffect(() => {
     fetchData();
   }, []);
 
+  const isUnauthorizedError = (err: any) => err?.response?.status === 401;
+
+  const requireToken = () => {
+    if (!token) {
+      handleUnauthorized();
+      setError('Tu sesión expiró. Vuelve a iniciar sesión.');
+      return false;
+    }
+    return true;
+  };
+
   const fetchData = async () => {
+    if (!requireToken()) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const [prestamosRes, clientesRes, librosRes] = await Promise.all([
@@ -57,6 +72,11 @@ export const PrestamosPage: React.FC = () => {
       setLibros(librosRes.data);
       setError(null);
     } catch (err: any) {
+      if (isUnauthorizedError(err)) {
+        handleUnauthorized();
+        setError('Tu sesión expiró. Vuelve a iniciar sesión.');
+        return;
+      }
       setError(err.response?.data?.error || 'Error al cargar datos');
     } finally {
       setLoading(false);
@@ -65,6 +85,7 @@ export const PrestamosPage: React.FC = () => {
 
   const handleCreatePrestamo = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    if (!requireToken()) return;
     setIsSubmitting(true);
     try {
       await axios.post(`${API_URL}/prestamos`, {
@@ -78,6 +99,11 @@ export const PrestamosPage: React.FC = () => {
       setShowForm(false);
       await fetchData();
     } catch (err: any) {
+      if (isUnauthorizedError(err)) {
+        handleUnauthorized();
+        setError('Tu sesión expiró. Vuelve a iniciar sesión.');
+        return;
+      }
       setError(err.response?.data?.error || 'Error al crear préstamo');
     } finally {
       setIsSubmitting(false);
@@ -85,6 +111,7 @@ export const PrestamosPage: React.FC = () => {
   };
 
   const handleDeletePrestamo = async (prestamoId: number) => {
+    if (!requireToken()) return;
     if (!user || user.role !== 'admin') {
       setError('Solo los administradores pueden eliminar préstamos');
       return;
@@ -96,11 +123,17 @@ export const PrestamosPage: React.FC = () => {
       });
       await fetchData();
     } catch (err: any) {
+      if (isUnauthorizedError(err)) {
+        handleUnauthorized();
+        setError('Tu sesión expiró. Vuelve a iniciar sesión.');
+        return;
+      }
       setError(err.response?.data?.error || 'Error al eliminar préstamo');
     }
   };
 
   const handleReturnBook = async (prestamoId: number) => {
+    if (!requireToken()) return;
     try {
       await axios.put(`${API_URL}/prestamos/${prestamoId}`, {
         fecha_devolucion_real: new Date().toISOString().split('T')[0],
@@ -109,6 +142,11 @@ export const PrestamosPage: React.FC = () => {
       });
       await fetchData();
     } catch (err: any) {
+      if (isUnauthorizedError(err)) {
+        handleUnauthorized();
+        setError('Tu sesión expiró. Vuelve a iniciar sesión.');
+        return;
+      }
       setError(err.response?.data?.error || 'Error al registrar devolución');
     }
   };
