@@ -1,0 +1,63 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: biblioteca-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: biblioteca_db
+      MYSQL_USER: biblioteca_user
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - biblioteca-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  backend:
+    image: python:3.11-slim
+    container_name: biblioteca-backend
+    working_dir: /app
+    command: bash -c "ls -la && pip install --no-cache-dir -r /app/requirements.txt && python /app/main.py"
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./BACKEND:/app
+    environment:
+      DATABASE_USER: biblioteca_user
+      DATABASE_PASSWORD: root
+      DATABASE_HOST: mysql
+      DATABASE_PORT: 3306
+      DATABASE_NAME: biblioteca_db
+      JWT_SECRET_KEY: mi-secreto-super-seguro-cambiar-en-produccion
+      ADMIN_EMAIL: admin@biblioteca.local
+      ADMIN_PASSWORD: admin123
+      ADMIN_NAME: Administrador
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - biblioteca-network
+
+  frontend:
+    image: node:20-alpine
+    container_name: biblioteca-frontend
+    working_dir: /app
+    command: bash -c "npm install && npm run dev"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./FRONTEND:/app
+    networks:
+      - biblioteca-network
+
+volumes:
+  mysql_data:
+
+networks:
+  biblioteca-network:
+    driver: bridge
