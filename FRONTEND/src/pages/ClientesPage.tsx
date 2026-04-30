@@ -89,27 +89,47 @@ export const ClientesPage: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-4xl font-extrabold text-gray-900 flex items-center gap-3">👥 Clientes</h1>
-            <p className="text-gray-600 mt-1">Gestiona los registros y la información de tus clientes</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button onClick={openModal} className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow"> <PlusIcon className="w-5 h-5"/> Nuevo Cliente</button>
-          </div>
-        </div>
-
-        <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-white rounded-xl shadow-sm p-4 flex items-center gap-4">
-            <div className="relative flex-1">
-              <MagnifyingGlassIcon className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
-              <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar por nombre o email..." className="w-full pl-12 pr-4 py-3 border rounded-lg" />
+    <div className="app-shell px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <section className="hero-panel mb-8 overflow-hidden">
+          <div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="relative p-8 sm:p-10 lg:p-12">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.12),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.10),transparent_24%)]" />
+              <div className="relative z-10 max-w-2xl">
+                <div className="toolbar-chip mb-4">Clientes · Gestión operativa</div>
+                <h1 className="text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl">Registros limpios y listos para escalar.</h1>
+                <p className="mt-4 max-w-xl text-lg leading-8 text-slate-600">Gestiona la información de clientes con una interfaz más clara, más actual y pensada para crecer por módulos.</p>
+              </div>
+            </div>
+            <div className="border-t border-slate-200/80 bg-slate-50/80 p-8 sm:p-10 lg:border-l lg:border-t-0">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="metric-tile">
+                  <p className="text-sm font-semibold text-slate-500">Total de clientes</p>
+                  <p className="mt-2 text-3xl font-bold text-slate-950">{clientes.length}</p>
+                </div>
+                <div className="metric-tile">
+                  <p className="text-sm font-semibold text-slate-500">Modo</p>
+                  <p className="mt-2 text-lg font-semibold text-blue-600">Edición rápida</p>
+                </div>
+              </div>
+              <div className="mt-4 flex gap-3">
+                <button onClick={openModal} className="action-primary w-full">
+                  <PlusIcon className="w-5 h-5" /> Nuevo cliente
+                </button>
+              </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-4 flex items-center justify-end">
-            <p className="text-sm text-gray-500">Total: <span className="font-semibold text-gray-900">{clientes.length}</span></p>
+        </section>
+
+        <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_260px]">
+          <div className="metric-tile flex items-center gap-4">
+            <div className="relative flex-1">
+              <MagnifyingGlassIcon className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
+              <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar por nombre o email..." className="form-field pl-12" />
+            </div>
+          </div>
+          <div className="metric-tile flex items-center justify-center">
+            <p className="text-sm text-slate-500">Total: <span className="font-semibold text-slate-950">{clientes.length}</span></p>
           </div>
         </div>
 
@@ -118,18 +138,18 @@ export const ClientesPage: React.FC = () => {
 
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }).map((_, i) => <div key={i} className="animate-pulse bg-white rounded-xl p-6 h-40" />)}
+            {Array.from({ length: 6 }).map((_, i) => <div key={i} className="animate-pulse grid-card h-40" />)}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.length ? filtered.map(cliente => (
-              <div key={cliente.id} className="bg-white rounded-2xl shadow-md p-6">
+              <div key={cliente.id} className="grid-card">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center font-bold text-blue-600">{cliente.nombre.charAt(0).toUpperCase()}</div>
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 font-bold text-white shadow-lg shadow-blue-500/20">{cliente.nombre.charAt(0).toUpperCase()}</div>
                     <div>
-                      <div className="font-semibold text-gray-900">{cliente.nombre}</div>
-                      <div className="text-sm text-gray-500">{cliente.email}</div>
+                      <div className="font-semibold text-slate-950">{cliente.nombre}</div>
+                      <div className="text-sm text-slate-500">{cliente.email}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -162,14 +182,16 @@ export const ClientesPage: React.FC = () => {
                     </Menu>
                   </div>
                 </div>
-                <div className="mt-4 text-sm text-gray-600">Tel: {cliente.telefono || '—'}</div>
-                <div className="mt-2 text-sm text-gray-600">Dir: {cliente.direccion || '—'}</div>
-                <div className="mt-4 text-xs text-gray-400">Registrado: {new Date(cliente.fecha_registro).toLocaleDateString()}</div>
+                <div className="mt-4 space-y-2 text-sm text-slate-600">
+                  <div>Tel: {cliente.telefono || '—'}</div>
+                  <div>Dir: {cliente.direccion || '—'}</div>
+                </div>
+                <div className="mt-5 text-xs font-medium text-slate-400">Registrado: {new Date(cliente.fecha_registro).toLocaleDateString()}</div>
               </div>
             )) : (
-              <div className="col-span-full bg-white rounded-xl shadow p-12 text-center">
-                <p className="text-xl text-gray-600">No se encontraron clientes</p>
-                <p className="text-gray-400 mt-2">Añade tu primer cliente usando el botón superior.</p>
+              <div className="col-span-full grid-card py-12 text-center">
+                <p className="text-xl font-semibold text-slate-700">No se encontraron clientes</p>
+                <p className="mt-2 text-slate-500">Añade tu primer cliente usando el botón superior.</p>
               </div>
             )}
           </div>
@@ -184,16 +206,16 @@ export const ClientesPage: React.FC = () => {
             <div className="fixed inset-0 overflow-y-auto">
               <div className="flex min-h-full items-center justify-center p-4 text-center">
                 <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-                  <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">Agregar nuevo cliente</Dialog.Title>
+                  <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-[2rem] bg-white p-6 text-left align-middle shadow-[0_30px_90px_rgba(15,23,42,0.18)] transition-all sm:p-8">
+                    <Dialog.Title as="h3" className="text-lg font-semibold leading-6 text-slate-950">Agregar nuevo cliente</Dialog.Title>
                     <form className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4" onSubmit={submitCliente}>
-                      <input required value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} placeholder="Nombre" className="col-span-2 px-4 py-3 border rounded-lg" />
-                      <input required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email" className="px-4 py-3 border rounded-lg" />
-                      <input value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} placeholder="Teléfono" className="px-4 py-3 border rounded-lg" />
-                      <input value={form.direccion} onChange={(e) => setForm({ ...form, direccion: e.target.value })} placeholder="Dirección" className="px-4 py-3 border rounded-lg" />
+                      <input required value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} placeholder="Nombre" className="form-field col-span-2" />
+                      <input required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email" className="form-field" />
+                      <input value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} placeholder="Teléfono" className="form-field" />
+                      <input value={form.direccion} onChange={(e) => setForm({ ...form, direccion: e.target.value })} placeholder="Dirección" className="form-field col-span-2" />
                       <div className="col-span-2 flex justify-end gap-3 mt-2">
-                        <button type="button" onClick={closeModal} className="px-4 py-2 rounded-lg border">Cancelar</button>
-                        <button type="submit" className="px-4 py-2 rounded-lg bg-blue-600 text-white">Guardar</button>
+                        <button type="button" onClick={closeModal} className="action-secondary">Cancelar</button>
+                        <button type="submit" className="action-primary">Guardar</button>
                       </div>
                     </form>
                   </Dialog.Panel>

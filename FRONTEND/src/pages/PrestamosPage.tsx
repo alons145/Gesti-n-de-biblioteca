@@ -167,41 +167,56 @@ export const PrestamosPage: React.FC = () => {
   const prestamosDevueltos = prestamos.filter((p) => p.fecha_devolucion_real).length;
 
   return (
-    <div className="flex-1 bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
-          <div>
-            <h1 className="text-4xl font-bold text-gray-900">📋 Control de Préstamos</h1>
-            <p className="text-gray-600 mt-2">Registra y monitorea todos los préstamos de libros</p>
+    <div className="app-shell px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <section className="hero-panel mb-8 overflow-hidden">
+          <div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="relative p-8 sm:p-10 lg:p-12">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(147,51,234,0.12),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.10),transparent_24%)]" />
+              <div className="relative z-10 max-w-2xl">
+                <div className="toolbar-chip mb-4">Préstamos · Control operativo</div>
+                <h1 className="text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl">Un control de préstamos más claro y profesional.</h1>
+                <p className="mt-4 max-w-xl text-lg leading-8 text-slate-600">Registra, devuelve y supervisa préstamos en una vista tipo dashboard pensada para lectura rápida y escalabilidad.</p>
+              </div>
+            </div>
+            <div className="border-t border-slate-200/80 bg-slate-50/80 p-8 sm:p-10 lg:border-l lg:border-t-0">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="metric-tile">
+                  <p className="text-sm font-semibold text-slate-500">Activos</p>
+                  <p className="mt-2 text-3xl font-bold text-blue-600">{prestamosActivos}</p>
+                </div>
+                <div className="metric-tile">
+                  <p className="text-sm font-semibold text-slate-500">Devueltos</p>
+                  <p className="mt-2 text-3xl font-bold text-emerald-600">{prestamosDevueltos}</p>
+                </div>
+              </div>
+              <div className="mt-4 flex gap-3">
+                {!showForm && (
+                  <button onClick={() => setShowForm(true)} className="action-primary w-full bg-gradient-to-r from-violet-600 to-purple-600">
+                    <PlusIcon className="w-5 h-5" /> Nuevo préstamo
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
-          {!showForm && (
-            <button
-              onClick={() => setShowForm(true)}
-              className="mt-4 sm:mt-0 inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-200"
-            >
-              <PlusIcon className="w-5 h-5" />
-              Nuevo Préstamo
-            </button>
-          )}
-        </div>
+        </section>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-l-4 border-blue-500 rounded-lg p-6">
-            <p className="text-sm text-gray-600">Préstamos activos</p>
-            <p className="text-3xl font-bold text-blue-600 mt-2">{prestamosActivos}</p>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 mb-8">
+          <div className="metric-tile border-l-4 border-l-blue-500 bg-gradient-to-br from-blue-50 to-cyan-50">
+            <p className="text-sm text-slate-600">Préstamos activos</p>
+            <p className="mt-2 text-3xl font-bold text-blue-600">{prestamosActivos}</p>
           </div>
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-l-4 border-green-500 rounded-lg p-6">
-            <p className="text-sm text-gray-600">Préstamos devueltos</p>
-            <p className="text-3xl font-bold text-green-600 mt-2">{prestamosDevueltos}</p>
+          <div className="metric-tile border-l-4 border-l-emerald-500 bg-gradient-to-br from-emerald-50 to-green-50">
+            <p className="text-sm text-slate-600">Préstamos devueltos</p>
+            <p className="mt-2 text-3xl font-bold text-emerald-600">{prestamosDevueltos}</p>
           </div>
         </div>
 
         {/* Error */}
         {success && <FeedbackBanner type="success" title="Préstamos" message={success} onClose={() => setSuccess(null)} />}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg flex items-center justify-between">
+          <div className="mb-6 flex items-center justify-between rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-rose-700 shadow-sm">
             <span>{error}</span>
             <button onClick={() => setError(null)}><XMarkIcon className="w-5 h-5" /></button>
           </div>
@@ -217,21 +232,21 @@ export const PrestamosPage: React.FC = () => {
             <div className="fixed inset-0 overflow-y-auto">
               <div className="flex min-h-full items-center justify-center p-4 text-center">
                 <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-                  <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">Registrar nuevo préstamo</Dialog.Title>
+                  <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-[2rem] bg-white p-6 text-left align-middle shadow-[0_30px_90px_rgba(15,23,42,0.18)] transition-all sm:p-8">
+                    <Dialog.Title as="h3" className="text-lg font-semibold leading-6 text-slate-950">Registrar nuevo préstamo</Dialog.Title>
                     <form onSubmit={handleCreatePrestamo} className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <select required value={formData.cliente_id} onChange={(e) => setFormData({ ...formData, cliente_id: e.target.value })} className="px-4 py-3 border rounded-lg">
+                      <select required value={formData.cliente_id} onChange={(e) => setFormData({ ...formData, cliente_id: e.target.value })} className="form-field">
                         <option value="">Selecciona un cliente</option>
                         {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
                       </select>
-                      <select required value={formData.libro_id} onChange={(e) => setFormData({ ...formData, libro_id: e.target.value })} className="px-4 py-3 border rounded-lg">
+                      <select required value={formData.libro_id} onChange={(e) => setFormData({ ...formData, libro_id: e.target.value })} className="form-field">
                         <option value="">Selecciona un libro</option>
                         {libros.filter(l => l.disponible).map(l => <option key={l.id} value={l.id}>{l.titulo}</option>)}
                       </select>
-                      <input type="date" value={formData.fecha_devolucion_esperada} onChange={(e) => setFormData({ ...formData, fecha_devolucion_esperada: e.target.value })} className="px-4 py-3 border rounded-lg" />
+                      <input type="date" value={formData.fecha_devolucion_esperada} onChange={(e) => setFormData({ ...formData, fecha_devolucion_esperada: e.target.value })} className="form-field" />
                       <div className="md:col-span-3 flex justify-end gap-3 mt-2">
-                        <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg border">Cancelar</button>
-                        <button type="submit" disabled={isSubmitting} className="px-4 py-2 rounded-lg bg-purple-600 text-white">{isSubmitting ? 'Registrando...' : 'Registrar'}</button>
+                        <button type="button" onClick={() => setShowForm(false)} className="action-secondary">Cancelar</button>
+                        <button type="submit" disabled={isSubmitting} className="action-primary bg-gradient-to-r from-violet-600 to-purple-600">{isSubmitting ? 'Registrando...' : 'Registrar'}</button>
                       </div>
                     </form>
                   </Dialog.Panel>
@@ -247,31 +262,31 @@ export const PrestamosPage: React.FC = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
           </div>
         ) : prestamos.length > 0 ? (
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="grid-card overflow-hidden p-0">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-gradient-to-r from-gray-100 to-gray-50 border-b-2 border-gray-200">
-                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Cliente</th>
-                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Libro</th>
-                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Préstamo</th>
-                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Devolución</th>
-                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Estado</th>
-                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Acciones</th>
+                  <tr className="border-b border-slate-200 bg-slate-50/90">
+                    <th className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Cliente</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Libro</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Préstamo</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Devolución</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Estado</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Acciones</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {prestamos.map((prestamo, index) => {
                     const isDevuelto = !!prestamo.fecha_devolucion_real;
                     return (
-                      <tr key={prestamo.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50 transition-colors`}>
-                        <td className="px-6 py-4 font-semibold text-gray-900">{prestamo.cliente.nombre}</td>
-                        <td className="px-6 py-4 text-gray-700">{prestamo.libro.titulo}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">
-                          <CalendarIcon className="w-4 h-4 inline mr-2" />
+                      <tr key={prestamo.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'} transition-colors hover:bg-blue-50/60`}>
+                        <td className="px-6 py-4 font-semibold text-slate-950">{prestamo.cliente.nombre}</td>
+                        <td className="px-6 py-4 text-slate-700">{prestamo.libro.titulo}</td>
+                        <td className="px-6 py-4 text-sm text-slate-600">
+                          <CalendarIcon className="mr-2 inline h-4 w-4" />
                           {new Date(prestamo.fecha_prestamo).toLocaleDateString()}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-600">
+                        <td className="px-6 py-4 text-sm text-slate-600">
                           {isDevuelto ? (
                             <span className="text-green-600 font-semibold">✓ {prestamo.fecha_devolucion_real}</span>
                           ) : (
@@ -279,9 +294,9 @@ export const PrestamosPage: React.FC = () => {
                           )}
                         </td>
                         <td className="px-6 py-4">
-                          <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${
+                          <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold ${
                             isDevuelto
-                              ? 'bg-green-100 text-green-700'
+                              ? 'bg-emerald-100 text-emerald-700'
                               : 'bg-blue-100 text-blue-700'
                           }`}>
                             {isDevuelto ? (
@@ -323,15 +338,15 @@ export const PrestamosPage: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-            <p className="text-2xl text-gray-500">📭 No hay préstamos registrados</p>
-            <p className="text-gray-400 mt-2">¡Comienza registrando el primer préstamo!</p>
+          <div className="grid-card p-12 text-center">
+            <p className="text-2xl font-semibold text-slate-700">📭 No hay préstamos registrados</p>
+            <p className="mt-2 text-slate-500">¡Comienza registrando el primer préstamo!</p>
           </div>
         )}
 
         {/* Info Footer */}
-        <div className="mt-8 p-6 bg-gradient-to-r from-purple-50 to-pink-50 border-l-4 border-purple-600 rounded-lg">
-          <p className="text-sm text-gray-700">
+        <div className="mt-8 rounded-2xl border border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50 p-6 shadow-sm">
+          <p className="text-sm text-slate-700">
             <span className="font-semibold">📊 Total de préstamos:</span> {prestamos.length} | 
             <span className="font-semibold ml-4">📖 Activos:</span> {prestamosActivos} | 
             <span className="font-semibold ml-4">✅ Devueltos:</span> {prestamosDevueltos}

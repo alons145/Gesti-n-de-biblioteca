@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import { LockClosedIcon, EnvelopeIcon, UserIcon } from '@heroicons/react/24/outline';
+import { LockClosedIcon, EnvelopeIcon, UserIcon, SparklesIcon, ShieldCheckIcon, BookOpenIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { FeedbackBanner } from '../components/FeedbackBanner';
 
 export const LoginPage: React.FC = () => {
@@ -51,178 +51,188 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700 flex items-center justify-center p-4">
-      {/* Fondo decorativo */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-8 right-10 w-72 h-72 bg-cyan-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
-      </div>
+    <div className="app-shell min-h-screen px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto grid min-h-[calc(100vh-3rem)] max-w-7xl items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+        <section className="relative overflow-hidden rounded-[2rem] border border-white/60 bg-slate-950/95 p-8 text-white shadow-[0_30px_100px_rgba(15,23,42,0.28)] sm:p-10 lg:p-12">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.18),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.20),transparent_28%)]" />
+          <div className="relative z-10 max-w-xl">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-cyan-100">
+              <SparklesIcon className="h-4 w-4" />
+              Biblioteca moderna para gestión real
+            </div>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Una interfaz clara, rápida y lista para crecer.</h1>
+            <p className="mt-5 max-w-lg text-base leading-7 text-slate-300 sm:text-lg">
+              Administra clientes, libros y préstamos desde una experiencia más limpia, más actual y más fácil de escalar.
+            </p>
 
-      <div className="relative w-full max-w-md">
-        {/* Card */}
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-12">
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-white bg-opacity-20 rounded-full mb-4">
-                <span className="text-4xl">📚</span>
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              <div className="rounded-2xl border border-white/10 bg-white/8 p-4 backdrop-blur">
+                <BookOpenIcon className="mb-3 h-6 w-6 text-cyan-200" />
+                <p className="text-sm font-semibold">Catálogo vivo</p>
+                <p className="mt-1 text-xs text-slate-300">Diseñado para navegar rápido entre módulos.</p>
               </div>
-              <h1 className="text-3xl font-bold text-white">Biblioteca</h1>
-              <p className="text-blue-100 mt-2">Sistema de Gestión Integral</p>
+              <div className="rounded-2xl border border-white/10 bg-white/8 p-4 backdrop-blur">
+                <ShieldCheckIcon className="mb-3 h-6 w-6 text-emerald-200" />
+                <p className="text-sm font-semibold">Roles claros</p>
+                <p className="mt-1 text-xs text-slate-300">Admin y usuario con permisos visualmente diferenciados.</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/8 p-4 backdrop-blur">
+                <ArrowRightIcon className="mb-3 h-6 w-6 text-sky-200" />
+                <p className="text-sm font-semibold">Escalable</p>
+                <p className="mt-1 text-xs text-slate-300">La UI ya queda lista para seguir creciendo por módulos.</p>
+              </div>
+            </div>
+
+            <div className="mt-10 flex flex-wrap gap-3 text-sm text-slate-300">
+              <span className="toolbar-chip border-white/10 bg-white/10 text-white">Diseño editorial</span>
+              <span className="toolbar-chip border-white/10 bg-white/10 text-white">Transiciones suaves</span>
+              <span className="toolbar-chip border-white/10 bg-white/10 text-white">Panel administrativo</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="glass-panel overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 px-8 py-8 text-white sm:px-10">
+            <div className="flex items-center gap-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 ring-1 ring-white/20">
+                <span className="text-3xl">📚</span>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.28em] text-cyan-50/80">Biblioteca</p>
+                <h2 className="text-3xl font-bold leading-tight">Sistema de Gestión Integral</h2>
+              </div>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="px-8 py-12">
+          <div className="px-8 py-8 sm:px-10 sm:py-10">
             {notice && <FeedbackBanner type={notice.type} title="Registro" message={notice.message} onClose={() => setNotice(null)} />}
             {error && (
-              <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded">
+              <div className="mb-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-rose-700 shadow-sm">
                 <p className="font-semibold text-sm">{error}</p>
               </div>
             )}
 
             {!showRegister ? (
-              // Login Form
               <form onSubmit={handleLogin} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    <div className="flex items-center gap-2">
-                      <EnvelopeIcon className="w-5 h-5 text-blue-600" />
+                  <label className="mb-2 block text-sm font-semibold text-slate-700">
+                    <span className="mb-1 flex items-center gap-2">
+                      <EnvelopeIcon className="h-5 w-5 text-blue-600" />
                       Email
-                    </div>
+                    </span>
                   </label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="admin@biblioteca.local"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-600 focus:outline-none transition-colors placeholder-gray-400"
+                    className="form-field"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    <div className="flex items-center gap-2">
-                      <LockClosedIcon className="w-5 h-5 text-blue-600" />
+                  <label className="mb-2 block text-sm font-semibold text-slate-700">
+                    <span className="mb-1 flex items-center gap-2">
+                      <LockClosedIcon className="h-5 w-5 text-blue-600" />
                       Contraseña
-                    </div>
+                    </span>
                   </label>
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="admin123"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-600 focus:outline-none transition-colors placeholder-gray-400"
+                    className="form-field"
                     required
                   />
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-8"
-                >
+                <button type="submit" disabled={isLoading} className="action-primary mt-2 w-full">
                   {isLoading ? 'Cargando...' : 'Ingresar'}
                 </button>
 
                 <div className="relative py-4">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-200"></div>
+                    <div className="w-full border-t border-slate-200"></div>
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-600">¿No tienes cuenta?</span>
+                    <span className="rounded-full bg-white px-3 py-1 text-slate-500 shadow-sm">¿No tienes cuenta?</span>
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setShowRegister(true)}
-                  className="w-full py-3 px-4 border-2 border-gray-200 text-blue-600 font-semibold rounded-lg hover:border-blue-600 hover:bg-blue-50 transition-colors"
-                >
+                <button type="button" onClick={() => setShowRegister(true)} className="action-secondary w-full">
                   Registrarse
                 </button>
               </form>
             ) : (
-              // Register Form
               <form onSubmit={handleRegister} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    <div className="flex items-center gap-2">
-                      <UserIcon className="w-5 h-5 text-blue-600" />
+                  <label className="mb-2 block text-sm font-semibold text-slate-700">
+                    <span className="mb-1 flex items-center gap-2">
+                      <UserIcon className="h-5 w-5 text-blue-600" />
                       Nombre
-                    </div>
+                    </span>
                   </label>
                   <input
                     type="text"
                     value={nombre}
                     onChange={(e) => setNombre(e.target.value)}
                     placeholder="Tu nombre completo"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-600 focus:outline-none transition-colors placeholder-gray-400"
+                    className="form-field"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    <div className="flex items-center gap-2">
-                      <EnvelopeIcon className="w-5 h-5 text-blue-600" />
+                  <label className="mb-2 block text-sm font-semibold text-slate-700">
+                    <span className="mb-1 flex items-center gap-2">
+                      <EnvelopeIcon className="h-5 w-5 text-blue-600" />
                       Email
-                    </div>
+                    </span>
                   </label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="tu@email.com"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-600 focus:outline-none transition-colors placeholder-gray-400"
+                    className="form-field"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    <div className="flex items-center gap-2">
-                      <LockClosedIcon className="w-5 h-5 text-blue-600" />
+                  <label className="mb-2 block text-sm font-semibold text-slate-700">
+                    <span className="mb-1 flex items-center gap-2">
+                      <LockClosedIcon className="h-5 w-5 text-blue-600" />
                       Contraseña
-                    </div>
+                    </span>
                   </label>
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Mínimo 6 caracteres"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-600 focus:outline-none transition-colors placeholder-gray-400"
+                    className="form-field"
                     required
                   />
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full py-3 px-4 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-green-500/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-8"
-                >
+                <button type="submit" disabled={isLoading} className="action-primary mt-2 w-full bg-gradient-to-r from-emerald-600 to-cyan-600">
                   {isLoading ? 'Cargando...' : 'Registrarse'}
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => setShowRegister(false)}
-                  className="w-full py-3 px-4 border-2 border-gray-200 text-gray-700 font-semibold rounded-lg hover:border-blue-600 hover:bg-blue-50 transition-colors"
-                >
+                <button type="button" onClick={() => setShowRegister(false)} className="action-secondary w-full">
                   Volver al login
                 </button>
               </form>
             )}
           </div>
 
-          {/* Footer */}
-          <div className="bg-gray-50 px-8 py-4 border-t border-gray-200">
-            <p className="text-center text-xs text-gray-500">
-              Credenciales de prueba: <span className="font-semibold">admin@biblioteca.local</span> / <span className="font-semibold">admin123</span>
-            </p>
+          <div className="border-t border-slate-200/80 bg-slate-50/80 px-8 py-4 text-center text-xs text-slate-500 sm:px-10">
+            Credenciales de prueba: <span className="font-semibold text-slate-700">admin@biblioteca.local</span> / <span className="font-semibold text-slate-700">admin123</span>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );

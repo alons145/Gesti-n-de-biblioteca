@@ -174,7 +174,7 @@ export const LibrosPage: React.FC = () => {
   const prestadosCount = libros.filter((l) => !l.disponible).length;
 
   const BookCard: React.FC<{ libro: Libro }> = ({ libro }) => (
-    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6 border-t-4 border-green-500">
+    <div className="grid-card border-t-4 border-t-emerald-500">
       <div className="flex justify-between items-start">
         <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold ${libro.disponible ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
           {libro.disponible ? <CheckCircleIcon className="w-4 h-4" /> : <span>⚠️</span>}
@@ -220,45 +220,56 @@ export const LibrosPage: React.FC = () => {
   );
 
   return (
-    <div className="flex-1 bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-4xl font-extrabold text-gray-900 flex items-center gap-3"><span className="text-3xl">📚</span> Catálogo de Libros</h1>
-            <p className="text-gray-600 mt-1">Profesional · Escalable · Fácil de usar</p>
+    <div className="app-shell px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <section className="hero-panel mb-8 overflow-hidden">
+          <div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="relative p-8 sm:p-10 lg:p-12">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.12),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.10),transparent_24%)]" />
+              <div className="relative z-10 max-w-2xl">
+                <div className="toolbar-chip mb-4">Libros · Catálogo editorial</div>
+                <h1 className="text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl">Un catálogo más limpio, actual y fácil de explorar.</h1>
+                <p className="mt-4 max-w-xl text-lg leading-8 text-slate-600">Gestiona títulos y disponibilidad en una experiencia visual más premium, lista para crecer con nuevos módulos.</p>
+              </div>
+            </div>
+            <div className="border-t border-slate-200/80 bg-slate-50/80 p-8 sm:p-10 lg:border-l lg:border-t-0">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="metric-tile">
+                  <p className="text-sm font-semibold text-slate-500">Disponibles</p>
+                  <p className="mt-2 text-3xl font-bold text-emerald-600">{disponiblesCount}</p>
+                </div>
+                <div className="metric-tile">
+                  <p className="text-sm font-semibold text-slate-500">En préstamo</p>
+                  <p className="mt-2 text-3xl font-bold text-amber-600">{prestadosCount}</p>
+                </div>
+              </div>
+              <div className="mt-4 flex gap-3">
+                <button onClick={openModal} className="action-primary w-full bg-gradient-to-r from-emerald-600 to-cyan-600">
+                  <PlusIcon className="w-5 h-5" /> Agregar libro
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <button onClick={openModal} className="inline-flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg shadow hover:scale-[1.01] transition">
-              <PlusIcon className="w-5 h-5" /> Agregar Libro
-            </button>
-          </div>
-        </div>
+        </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div className="p-6 bg-white rounded-xl shadow-sm flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Libros disponibles</p>
-              <p className="text-2xl font-bold text-green-600">{disponiblesCount}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Libros en préstamo</p>
-              <p className="text-2xl font-bold text-orange-600">{prestadosCount}</p>
-            </div>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-6 flex items-center gap-4">
+        <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_280px]">
+          <div className="metric-tile flex items-center gap-4">
             <div className="relative flex-1">
-              <MagnifyingGlassIcon className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
-              <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar por título o autor..." className="w-full pl-12 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-200" />
+              <MagnifyingGlassIcon className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
+              <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar por título o autor..." className="form-field pl-12" />
             </div>
-            <select value={category} onChange={(e) => setCategory(e.target.value)} className="px-4 py-2 border rounded-lg">
+            <select value={category} onChange={(e) => setCategory(e.target.value)} className="form-field w-auto min-w-[180px]">
               <option value="">Todas las categorías</option>
               {categorias.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
-            <select value={availability} onChange={(e) => setAvailability(e.target.value)} className="px-4 py-2 border rounded-lg">
+            <select value={availability} onChange={(e) => setAvailability(e.target.value)} className="form-field w-auto min-w-[150px]">
               <option value="all">Todos</option>
               <option value="available">Disponibles</option>
               <option value="borrowed">Prestados</option>
             </select>
+          </div>
+          <div className="metric-tile flex items-center justify-center">
+            <p className="text-sm text-slate-500">Catálogo total: <span className="font-semibold text-slate-950">{libros.length}</span></p>
           </div>
         </div>
 
@@ -268,15 +279,15 @@ export const LibrosPage: React.FC = () => {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="animate-pulse bg-white rounded-2xl p-6 h-48" />
+              <div key={i} className="animate-pulse grid-card h-48" />
             ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.length ? filtered.map((libro) => <BookCard key={libro.id} libro={libro} />) : (
-              <div className="col-span-full bg-white rounded-xl shadow p-12 text-center">
-                <p className="text-xl text-gray-600">No se encontraron libros</p>
-                <p className="text-gray-400 mt-2">Intenta ajustar los filtros o añade un nuevo libro.</p>
+              <div className="col-span-full grid-card py-12 text-center">
+                <p className="text-xl font-semibold text-slate-700">No se encontraron libros</p>
+                <p className="mt-2 text-slate-500">Intenta ajustar los filtros o añade un nuevo libro.</p>
               </div>
             )}
           </div>
@@ -292,20 +303,20 @@ export const LibrosPage: React.FC = () => {
             <div className="fixed inset-0 overflow-y-auto">
               <div className="flex min-h-full items-center justify-center p-4 text-center">
                 <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-                  <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">{editingId ? 'Editar libro' : 'Agregar nuevo libro'}</Dialog.Title>
+                    <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-[2rem] bg-white p-6 text-left align-middle shadow-[0_30px_90px_rgba(15,23,42,0.18)] transition-all sm:p-8">
+                    <Dialog.Title as="h3" className="text-lg font-semibold leading-6 text-slate-950">{editingId ? 'Editar libro' : 'Agregar nuevo libro'}</Dialog.Title>
                     <form className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4" onSubmit={submitLibro}>
-                      <input required value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} placeholder="Título" className="col-span-2 px-4 py-3 border rounded-lg" />
-                      <input required value={form.autor} onChange={(e) => setForm({ ...form, autor: e.target.value })} placeholder="Autor" className="px-4 py-3 border rounded-lg" />
-                      <select required value={form.categoria} onChange={(e) => setForm({ ...form, categoria: e.target.value })} className="px-4 py-3 border rounded-lg">
+                      <input required value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} placeholder="Título" className="form-field col-span-2" />
+                      <input required value={form.autor} onChange={(e) => setForm({ ...form, autor: e.target.value })} placeholder="Autor" className="form-field" />
+                      <select required value={form.categoria} onChange={(e) => setForm({ ...form, categoria: e.target.value })} className="form-field">
                         <option value="">Categoría</option>
                         {categorias.map((c) => <option key={c} value={c}>{c}</option>)}
                       </select>
-                      <input value={form.descripcion} onChange={(e) => setForm({ ...form, descripcion: e.target.value })} placeholder="Descripción (opcional)" className="px-4 py-3 border rounded-lg col-span-2" />
+                      <input value={form.descripcion} onChange={(e) => setForm({ ...form, descripcion: e.target.value })} placeholder="Descripción (opcional)" className="form-field col-span-2" />
 
                       <div className="col-span-2 flex justify-end gap-3 mt-2">
-                        <button type="button" onClick={closeModal} className="px-4 py-2 rounded-lg border">Cancelar</button>
-                        <button type="submit" disabled={isSubmitting} className="px-4 py-2 rounded-lg bg-emerald-600 text-white">{isSubmitting ? 'Guardando...' : editingId ? 'Actualizar' : 'Guardar'}</button>
+                        <button type="button" onClick={closeModal} className="action-secondary">Cancelar</button>
+                        <button type="submit" disabled={isSubmitting} className="action-primary bg-gradient-to-r from-emerald-600 to-cyan-600">{isSubmitting ? 'Guardando...' : editingId ? 'Actualizar' : 'Guardar'}</button>
                       </div>
                     </form>
                   </Dialog.Panel>

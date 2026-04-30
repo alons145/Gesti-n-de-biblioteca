@@ -12,16 +12,16 @@ interface FeedbackBannerProps {
 
 const styles: Record<FeedbackType, { container: string; title: string }> = {
   success: {
-    container: 'bg-green-50 border-green-500 text-green-800',
-    title: 'text-green-900',
+    container: 'border-emerald-200 bg-emerald-50/90 text-emerald-800',
+    title: 'text-emerald-950',
   },
   error: {
-    container: 'bg-red-50 border-red-500 text-red-700',
-    title: 'text-red-900',
+    container: 'border-rose-200 bg-rose-50/90 text-rose-800',
+    title: 'text-rose-950',
   },
   info: {
-    container: 'bg-blue-50 border-blue-500 text-blue-800',
-    title: 'text-blue-900',
+    container: 'border-sky-200 bg-sky-50/90 text-sky-800',
+    title: 'text-sky-950',
   },
 };
 
@@ -29,14 +29,14 @@ export const FeedbackBanner: React.FC<FeedbackBannerProps> = ({ type, title, mes
   const variant = styles[type];
 
   return (
-    <div className={`mb-6 p-4 border-l-4 rounded-lg flex items-start justify-between gap-4 ${variant.container}`}>
+    <div className={`mb-6 flex items-start justify-between gap-4 rounded-2xl border px-4 py-4 shadow-[0_12px_30px_rgba(15,23,42,0.08)] backdrop-blur ${variant.container}`}>
       <div>
-        {title && <p className={`font-semibold text-sm mb-1 ${variant.title}`}>{title}</p>}
-        <p className="text-sm font-medium">{message}</p>
+        {title && <p className={`mb-1 text-sm font-semibold ${variant.title}`}>{title}</p>}
+        <p className="text-sm font-medium leading-6">{message}</p>
       </div>
       {onClose && (
-        <button onClick={onClose} className="shrink-0 mt-0.5">
-          <XMarkIcon className="w-5 h-5" />
+        <button onClick={onClose} className="shrink-0 rounded-full p-1 transition hover:bg-white/50">
+          <XMarkIcon className="h-5 w-5" />
         </button>
       )}
     </div>
